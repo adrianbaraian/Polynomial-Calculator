@@ -4,6 +4,7 @@ import polynomial_calculator.utils.PolynomialLogic;
 import polynomial_calculator.utils.PrettyPrint;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 public class Polynomial {
@@ -47,21 +48,11 @@ public class Polynomial {
             } else {
                 if(entry.getValue().getCoeff().floatValue() != 0)
                     result = result + ((entry.getValue().getCoeff().floatValue() > 0) ? ("+" + PrettyPrint.prettyPrint(entry.getValue().getCoeff())) : (PrettyPrint.prettyPrint(entry.getValue().getCoeff())));
-                else {
-                    boolean ok = true;
-                    for(Map.Entry<Integer, Monomial> entry1 : this.terms.descendingMap().entrySet()) {
-                        if(entry1.getValue().getCoeff().floatValue() != 0) {
-                            ok = false;
-                            break;
-                        }
-                    }
-                    if(ok) {
-                        result = result + "0";
-                    }
-                }
+
             }
         }
 
+        if(Objects.equals(result, "") && !this.terms.isEmpty()) result = "0";
         return result;
     }
 }

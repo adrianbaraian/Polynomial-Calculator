@@ -53,7 +53,7 @@ public class Operations {
         Polynomial R = new Polynomial();
 
         PolynomialParse.parsePolynomial(R, p1.toString());
-
+        PolynomialParse.parsePolynomial(Q, "0");
 
         while (R.getDegree() >= p2.getDegree() && R.getDegree() > 0){
             Monomial t = new Monomial((PolynomialLogic.getLeadingTerm(R).getCoeff().floatValue() / PolynomialLogic.getLeadingTerm(p2).getCoeff().floatValue()), PolynomialLogic.getLeadingTerm(R).getPower() - PolynomialLogic.getLeadingTerm(p2).getPower());
