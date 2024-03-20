@@ -1,51 +1,29 @@
 package polynomial_calculator.model;
 
-import java.util.HashMap;
+import polynomial_calculator.utils.PolynomialLogic;
+import polynomial_calculator.utils.PrettyPrint;
+
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Polynomial {
     private TreeMap<Integer, Monomial> terms;
+    private int degree;
 
     public Polynomial() {
         this.terms = new TreeMap<>();
+        this.degree = 0;
     }
-
     public void addMonomial(Monomial monomial) {
         this.terms.put(monomial.getPower(), monomial);
     }
 
-    public static boolean isValid(String sPolynomial) {
-        String patternRegex = "^\\s*([+-]?\\s*\\d*\\*?x(\\^\\d+)?\\s*)+[+-]?\\s*\\d*\\s*$";
-        Pattern pattern = Pattern.compile(patternRegex);
-
-        Matcher matcher = pattern.matcher(sPolynomial);
-        return matcher.matches();
+    public int getDegree() {
+        return degree;
     }
 
-    public void parsePolynomial(String sPolynomial) {
-        String patternRegex = "([+-]?\\s*\\d*)\\*?x(\\^(\\d+))?\\s*|([+-]?\\s*\\d+)\\s*";
-        Pattern pattern = Pattern.compile(patternRegex);
-
-        Matcher matcher = pattern.matcher(sPolynomial);
-        while(matcher.find()) {
-            String matchedMonomial = matcher.group().trim();
-            String sCoeff = matcher.group(1);
-            String sPower = matcher.group(3);
-
-            if(sCoeff != null) {
-                Integer coeff = (sCoeff.isEmpty()) ? 1 : Integer.parseInt(sCoeff);
-                Integer power = (sPower == null) ? 1 : Integer.parseInt(sPower);
-                this.addMonomial(new Monomial(coeff, power));
-            } else {
-                int freeTerm = Integer.parseInt(matcher.group(4));
-                this.addMonomial(new Monomial(freeTerm, 0));
-            }
-
-
-        }
+    public void setDegree(int degree) {
+        this.degree = degree;
     }
 
     public TreeMap<Integer, Monomial> getTerms() {
@@ -57,13 +35,30 @@ public class Polynomial {
         String result = "";
         for(Map.Entry<Integer, Monomial> entry : this.terms.descendingMap().entrySet()) {
             if(entry.getValue().getPower() != 0) {
-                if (entry.getValue().getCoeff() > 0 ) {
-                    result = result + "+" + entry.getValue().getCoeff() + "*x^" + entry.getValue().getPower();
-                } else {
-                    result = result + entry.getValue().getCoeff() + "*x^" + entry.getValue().getPower();
+                if (entry.getValue().getCoeff().floatValue() > 0) {
+                    if (entry.getValue().getPower() != PolynomialLogic.getLeadingTerm(this).getPower())
+                        result = result + "+" + PrettyPrint.prettyPrint(entry.getValue().getCoeff()) + "*x^" + entry.getValue().getPower();
+                    else {
+                        result = result + PrettyPrint.prettyPrint(entry.getValue().getCoeff()) + "*x^" + entry.getValue().getPower();
+                    }
+                } else if(entry.getValue().getCoeff().floatValue() < 0){
+                    result = result + PrettyPrint.prettyPrint(entry.getValue().getCoeff()) + "*x^" + entry.getValue().getPower();
                 }
             } else {
-                result = result + ((entry.getValue().getCoeff() > 0) ? ("+" + entry.getValue().getCoeff()) : ("-" + entry.getValue().getCoeff()));
+                if(entry.getValue().getCoeff().floatValue() != 0)
+                    result = result + ((entry.getValue().getCoeff().floatValue() > 0) ? ("+" + PrettyPrint.prettyPrint(entry.getValue().getCoeff())) : (PrettyPrint.prettyPrint(entry.getValue().getCoeff())));
+                else {
+                    boolean ok = true;
+                    for(Map.Entry<Integer, Monomial> entry1 : this.terms.descendingMap().entrySet()) {
+                        if(entry1.getValue().getCoeff().floatValue() != 0) {
+                            ok = false;
+                            break;
+                        }
+                    }
+                    if(ok) {
+                        result = result + "0";
+                    }
+                }
             }
         }
 

@@ -6,6 +6,7 @@ import java.awt.*;
 public class View extends JFrame {
 
     private JPanel contentPane;
+    protected JLabel errorLabel;
     private JPanel resultPanel;
     private JLabel resultTextLabel;
     private JLabel resultPolynomialLabel;
@@ -64,6 +65,9 @@ public class View extends JFrame {
         this.calculationsPanel.add(this.selectOpLabel);
         this.calculationsPanel.add(this.operationComboBox);
         this.calculationsPanel.add(this.computeButton);
+        this.errorLabel = new JLabel("<html>" + "WRONG INPUT! Enter something like this: +-(coeff)*x^(power) +- free term. Make sure to fill both inputs " + "</html>", JLabel.CENTER);
+        this.errorLabel.setVisible(false);
+        this.calculationsPanel.add(errorLabel);
         this.contentPane.add(calculationsPanel);
     }
 
